@@ -31,8 +31,7 @@
                     <a class="navbar-brand" href="{{ url('/') }}">
                         {{ config('app.name', 'Laravel') }}
                     </a>
-                </div>
-
+                </div>  
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
@@ -50,8 +49,21 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
-
                                 <ul class="dropdown-menu" role="menu">
+                                    @if (Auth::user()->rule == 1)                                                   
+                                    <li>
+                                        @if (\Route::current()->getName() == 'product.index')
+                                            <a href="{{ route('post.index') }}">
+                                                Post
+                                            </a>
+                                        @elseif(\Route::current()->getName() == 'post.index')
+                                            <a href="{{ route('product.index') }}">
+                                                Admin
+                                            </a>
+                                        @endif
+                                        
+                                    </li>
+                                    @endif
                                     <li>
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
@@ -63,6 +75,8 @@
                                             {{ csrf_field() }}
                                         </form>
                                     </li>
+
+                                    
                                 </ul>
                             </li>
                         @endguest

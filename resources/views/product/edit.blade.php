@@ -12,10 +12,12 @@
 </head>
 <body>
 	<div class="container">
+		<h2 style="text-align: center;">UPDATE PRODUCT</h2>
+		<a href="{{route('product.index')}}"><button type="submit" class="btn btn-primary">BACK</button></a>
 		<form action="{{Route('product.update', $product->id)}}" method="POST" role="form" id="create" enctype='multipart/form-data'>
-			<h2 style="text-align: center;">CREATE PRODUCT</h2>
-			{{csrf_field()}}
 			
+			{{csrf_field()}}
+			{{-- {{dd($product->Description)}} --}}
 			<input type="hidden" name="_method" value="PUT">
 			<div class="form-group">
 				<label for="">Name</label>
@@ -37,7 +39,7 @@
 			@endif
 			<div class="form-group">
 				<label for="">Photo</label>
-				<input type="file" class="form-control" name="Photo" id="" placeholder="Input photo">
+				<input type="file" class="form-control" name="Photo" id="" placeholder="Input photo" value="{{old('Photo',$product->Photo)}}">
 			</div>
 			@if ($errors->has('Photo'))
 			    <div class="alert alert-danger">
@@ -47,7 +49,7 @@
 
 			<div class="form-group">
 				<label for="">Description</label>
-				<textarea id="Description" name="Description" value="">{{$product->Description}}</textarea>
+				<textarea id="Description" name="Description" class="form-control" value="" cols="160" rows="10">{!!$product->Description!!}</textarea>
 			</div>
 			@if ($errors->has('Description'))
 			    <div class="alert alert-danger">
@@ -55,11 +57,12 @@
 			    </div>
 			@endif
 
-			<script type="text/javascript">
+			{{-- <script type="text/javascript">
 				CKEDITOR.replace('Description');
-			</script>
+			</script> --}}
 		
-			<button type="submit" class="btn btn-primary">Submit</button>
+			<button type="submit" class="btn btn-primary">UPDATE</button>
+
 		</form>	
 	</div>
 	

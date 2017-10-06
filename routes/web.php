@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::resource('/product', 'ProductController');
+Route::get('/', 'PostController@index');
+Route::resource('/product', 'ProductController')->middleware('checkrule');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::resource('/post','PostController',['only'=>['index','show']]);

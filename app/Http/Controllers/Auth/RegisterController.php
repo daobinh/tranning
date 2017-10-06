@@ -27,17 +27,17 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/post';
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('guest');
+    // }
 
     /**
      * Get a validator for an incoming registration request.
@@ -62,10 +62,13 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $status = (!isset($data['status']) || $data['status'] ? 1:0);
+        $data['status'] = $status;
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'status' => $data['status'],
         ]);
     }
 }

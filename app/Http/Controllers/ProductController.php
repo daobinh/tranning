@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\EditProductRequest;
 
 class ProductController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +22,7 @@ class ProductController extends Controller
     public function index()
     {   
         
-        $products = Product::all();
+        $products = Product::orderby('id','desc')->paginate(5);
 
         return view('product.index',['products' => $products]);
     }
@@ -37,9 +43,31 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        Product::create($request->all());
+
+        $data = $request->all();
+
+        // dd(e($request->Description));
+
+        if ($request->hasFile('Photo')) {
+            
+            $photo = $request->Photo;
+
+            $photo_name = $photo->getClientOriginalName();
+
+            $photo->move('photo',$photo_name);
+
+        }
+
+        $data['Photo']= 'photo/' .$photo_name;
+
+        $data['Description'] = e($request->Description);
+
+
+        Product::create($data);
+
+        session()->flash('notification', 'create new successful!');
 
         return redirect()->route('product.index');
     }
@@ -77,11 +105,32 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditProductRequest $request, $id)
     {
         $product = Product::where('id',$id);
 
-        $product->update(['Name' => $request->Name, 'Description' =>$request->Description,'Photo' => $request->Photo,'Price' => $request->Price]);
+        // dd(e($request->Description));
+
+        if (!empty($request->Photo)) {
+            if ($request->hasFile('Photo')) {
+            
+                $photo = $request->Photo;
+
+                $photo_name = $photo->getClientOriginalName();
+
+                $photo->move('photo',$photo_name);
+
+            }
+            $request->Photo = 'photo/' .$photo_name;
+
+            $product->update(['Name' => $request->Name,'Description' => e($request->Description),'Photo' => $request->Photo,'Price' => $request->Price]);
+        }
+        else{
+            $product->update(['Name' => $request->Name,'Description' => e($request->Description),'Price' => $request->Price]);
+        }
+
+        session()->flash('notification', 'update successful!');
+
         return redirect()->route('product.index');
     }
 
@@ -94,6 +143,8 @@ class ProductController extends Controller
     public function destroy($id)
     {
         Product::find($id)->delete();
+
+        session()->flash('notification', 'delete successful!');
 
         return redirect()->back();
     }
